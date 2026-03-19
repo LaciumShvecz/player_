@@ -1,0 +1,68 @@
+.lyrics {
+	height: 100%;
+	overflow-y: auto;
+	padding: 20px;
+
+	&::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: #4a4a4a;
+		border-radius: 3px;
+
+		&:hover {
+			background: #5a5a5a;
+		}
+	}
+}
+
+.line {
+	display: block;
+	width: 100%;
+	text-align: left;
+	background: none;
+	border: none;
+	color: #666;
+	padding: 8px;
+	margin: 4px 0;
+	cursor: pointer;
+	transition: all 0.2s;
+	font-size: 14px;
+
+	&:hover {
+		color: #fff;
+		background: rgba(255, 255, 255, 0.1);
+	}
+
+	&.active {
+		color: var(--color-primary);
+		font-weight: 600;
+		transform: scale(1.05);
+	}
+
+	p {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+	}
+}
+
+.icon {
+	flex-shrink: 0;
+}
+
+.noTrack, .loading, .error, .noLyrics {
+	color: #666;
+	text-align: center;
+	padding: 40px 20px;
+}
+
+.error {
+	color: #ff4444;
+}

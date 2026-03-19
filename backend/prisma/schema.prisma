@@ -1,0 +1,121 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  playlists     Playlist[]
+  favoriteTracks Favorite[]
+}
+
+model Artist {
+  id             Int      @id @default(autoincrement())
+  name           String   @unique
+  image          String?
+  bio            String?
+  listenersCount Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  tracks         Track[]
+  albums         Album[]
+}
+
+model Album {
+  id          Int       @id @default(autoincrement())
+  name        String
+  cover       String?
+  releaseDate DateTime?
+  artistId    Int
+  artist      Artist    @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  tracks      Track[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([artistId])
+}
+
+model Track {
+  id        Int     @id @default(autoincrement())
+  name      String
+  file      String
+  cover     String
+  duration  Int
+  artistId  Int
+  albumId   Int?
+  artist    Artist    @relation(fields: [artistId], references: [id])
+  album     Album?    @relation(fields: [albumId], references: [id])
+  lyrics    Lyrics[]
+  playlists PlaylistTrack[]
+  favoritedBy Favorite[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([albumId])
+}
+
+model Lyrics {
+  id      Int    @id @default(autoincrement())
+  trackId Int
+  time    Int
+  text    String
+  track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@index([trackId])
+}
+
+model Playlist {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  isPublic    Boolean  @default(true)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tracks      PlaylistTrack[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model PlaylistTrack {
+  id         String   @id @default(cuid())
+  playlistId String
+  trackId    Int
+  addedAt    DateTime @default(now())
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  track      Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, trackId])
+  @@index([playlistId])
+  @@index([trackId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  trackId   Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track     Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, trackId])
+  @@index([userId])
+  @@index([trackId])
+}

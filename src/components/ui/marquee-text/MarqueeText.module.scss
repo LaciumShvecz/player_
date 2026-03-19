@@ -1,0 +1,11 @@
+﻿.container {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.text {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+}
